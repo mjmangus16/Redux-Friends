@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { addFriend, updateFriend } from "../redux/actions/index";
 
 const styles = {
   container: {
@@ -27,10 +29,14 @@ class Form extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.active && prevProps.active !== this.props.active) {
-      this.setState({
-        name: this.props.active.name,
-        age: this.props.active.age,
-        email: this.props.active.email
+      this.setState(() => {
+        return {
+          friend: {
+            name: this.props.active.name,
+            age: this.props.active.age,
+            email: this.props.active.email
+          }
+        };
       });
     }
   }
@@ -49,16 +55,18 @@ class Form extends Component {
       this.state.friend.email !== ""
     ) {
       this.props.addFriend(this.state.friend);
-      this.props.history.push("/");
+      this.props.history.push("/protected/friendsList");
     }
   };
 
-  handleSubmit = () => {
+  handleSubmit = e => {
+    e.preventDefault();
     const friend = this.state.friend;
 
     if (this.props.active) {
-      console.log(this.state.friend);
-      this.props.editFriend(friend);
+      this.props.updateFriend(friend);
+      this.props.removeActive();
+      this.props.history.push("/protected/friendsList");
     } else {
       this.addFriend();
     }
@@ -69,36 +77,50 @@ class Form extends Component {
 
     return (
       <div style={styles.container}>
-        <input
-          style={styles.input}
-          placeholder="Friends Name"
-          name="name"
-          onChange={e => this.inputHandler(e)}
-          value={name}
-        />
+        <form onSubmit={this.handleSubmit}>
+          <input
+            style={styles.input}
+            placeholder="Friends Name"
+            name="name"
+            onChange={e => this.inputHandler(e)}
+            value={name}
+          />
 
-        <input
-          style={styles.input}
-          placeholder="Friends Age"
-          name="age"
-          onChange={e => this.inputHandler(e)}
-          value={age}
-        />
+          <input
+            style={styles.input}
+            placeholder="Friends Age"
+            name="age"
+            onChange={e => this.inputHandler(e)}
+            value={age}
+          />
 
-        <input
-          style={styles.input}
-          placeholder="Friends Email"
-          name="email"
-          onChange={e => this.inputHandler(e)}
-          value={email}
-        />
+          <input
+            style={styles.input}
+            placeholder="Friends Email"
+            name="email"
+            onChange={e => this.inputHandler(e)}
+            value={email}
+          />
 
-        <button style={styles.input} onClick={this.handleSubmit}>
-          {this.props.active ? "UPDATE" : "SUBMIT"}
-        </button>
+          <button style={styles.input} onClick={this.handleSubmit}>
+            {this.props.active ? "UPDATE" : "SUBMIT"}
+          </button>
+        </form>
       </div>
     );
   }
 }
 
-export default Form;
+const mapStateToProps = state => {
+  return {
+    friends: state.friendsReducer.friends,
+    fetching: state.friendsReducer.fetching,
+    error: state.friendsReducer.error,
+    loggingIn: state.friendsReducer.logginIn
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { addFriend, updateFriend }
+)(Form);

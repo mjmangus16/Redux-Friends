@@ -16,17 +16,23 @@ const styles = {
   }
 };
 
-const Nav = () => {
+const Nav = props => {
+  const logout = () => {
+    localStorage.removeItem("token");
+  };
+
   return (
     <div style={styles.container}>
-      <Link to="/login">
-        <div style={styles.button}>Login</div>
-      </Link>
-      <Link to="/">
+      <Link to="/protected/friendsList">
         <div style={styles.button}>Friends List</div>
       </Link>
-      <Link to="friendForm">
+      <Link to="/protected/friendForm">
         <div style={styles.button}>Add Friend</div>
+      </Link>
+      <Link to="/">
+        <div style={styles.button} onClick={props.logout}>
+          Logout
+        </div>
       </Link>
     </div>
   );

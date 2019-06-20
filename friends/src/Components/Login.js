@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { login } from "../redux/actions/index";
 
 const styles = {
   container: {
@@ -26,34 +28,59 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  login = e => {
+    e.preventDefault();
+    this.props
+      .login({
+        username: this.state.username,
+        password: this.state.password
+      })
+      .then(res => {
+        if (res) {
+          this.props.history.push("/protected/friendsList");
+        }
+      });
+  };
+
   render() {
     const { username, password } = this.state;
 
     return (
       <div style={styles.container}>
-        <input
-          style={styles.input}
-          placeholder="Username"
-          name="username"
-          onChange={e => this.inputHandler(e)}
-          value={username}
-        />
+        <form onSubmit={this.login}>
+          <input
+            style={styles.input}
+            placeholder="Username"
+            name="username"
+            onChange={e => this.inputHandler(e)}
+            value={username}
+          />
 
-        <input
-          style={styles.input}
-          placeholder="password"
-          name="password"
-          onChange={e => this.inputHandler(e)}
-          value={password}
-          type="password"
-        />
-
-        <button style={styles.input} onClick={this.handleSubmit}>
-          {this.props.active ? "UPDATE" : "SUBMIT"}
-        </button>
+          <input
+            style={styles.input}
+            placeholder="password"
+            name="password"
+            onChange={e => this.inputHandler(e)}
+            value={password}
+            type="password"
+          />
+          <button style={styles.input}>LOG IN</button>
+        </form>
       </div>
     );
   }
 }
 
-export default Login;
+const mapStateToProps = state => {
+  return {
+    error: state.friendsReducer.error,
+    loggingIn: state.friendsReducer.loggingIn
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  {
+    login
+  }
+)(Login);

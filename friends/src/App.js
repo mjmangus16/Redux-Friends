@@ -2,19 +2,15 @@ import React from "react";
 import "./App.css";
 import { Route } from "react-router-dom";
 
-import Nav from "./Components/Nav";
-import FriendsList from "./Components/FriendsList";
-import Form from "./Components/Form";
 import Login from "./Components/Login";
+import PrivateRoute from "./Components/PrivateRoute";
+import Authorized from "./Components/Authorized";
 
 const App = () => {
   return (
     <div className="App">
-      <Nav />
-      <Route exact path="/login" render={props => <Login {...props} />} />
-      <Route path="/friendForm" render={props => <Form {...props} />} />
-
-      <Route exact path="/" render={props => <FriendsList {...props} />} />
+      <Route exact path="/" render={props => <Login {...props} />} />
+      <PrivateRoute path="/protected" component={Authorized} />
     </div>
   );
 };

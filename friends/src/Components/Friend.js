@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { deleteFriend } from "../redux/actions/index";
 
 const styles = {
   container: {
@@ -29,4 +30,16 @@ const Friend = ({ friend, deleteFriend, setForm }) => {
   );
 };
 
-export default Friend;
+const mapStateToProps = state => {
+  return {
+    friends: state.friendsReducer.friends,
+    fetching: state.friendsReducer.fetching,
+    error: state.friendsReducer.error,
+    loggingIn: state.friendsReducer.logginIn
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { deleteFriend }
+)(Friend);
